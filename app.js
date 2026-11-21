@@ -21,6 +21,28 @@ const heroImages = [
   { src: "assets/works/arsenal-cover.jpg", ratio: 1.777, size: 310, label: "FRAME 15" },
 ];
 
+const projectRoutes = {
+  "01": "projects/space-motion/",
+  "02": "projects/charity-a/",
+  "03": "projects/wifi/",
+  "04": "projects/aigc/",
+  "05": "projects/abao-ip/",
+  "06": "projects/baomi/",
+  "07": "projects/yonho-ip/",
+  "08": "projects/research/",
+  "09": "projects/g65/",
+  10: "projects/charity-b/",
+  11: "projects/4k120/",
+  12: "projects/security/",
+  13: "projects/regret/",
+  14: "projects/copilot-studio/",
+  15: "projects/arsenal/",
+  16: "projects/copilot-compare/",
+  17: "projects/event/",
+  18: "projects/github/",
+  19: "projects/aptamil-motion/",
+};
+
 const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
 const finePointer = window.matchMedia("(hover: hover) and (pointer: fine)");
 
@@ -28,15 +50,6 @@ const heroMedia = document.querySelector(".hero-media");
 const header = document.querySelector(".site-header");
 const cursor = document.querySelector(".site-cursor");
 const projects = [...document.querySelectorAll(".project")];
-const projectViewer = document.querySelector(".project-viewer");
-const viewerStage = projectViewer?.querySelector(".viewer-stage");
-const viewerVideo = projectViewer?.querySelector("video");
-const viewerImage = projectViewer?.querySelector("img");
-const viewerIndex = projectViewer?.querySelector(".viewer-index");
-const viewerCategory = projectViewer?.querySelector(".viewer-category");
-const viewerTitle = projectViewer?.querySelector(".viewer-title");
-const viewerDescription = projectViewer?.querySelector(".viewer-description");
-const viewerClose = projectViewer?.querySelector(".viewer-close");
 
 let imageIndex = 0;
 let lastSpawn = 0;
@@ -44,7 +57,6 @@ let previousPoint = null;
 let idleTimer = 0;
 let hasInteracted = false;
 let activeTiles = [];
-let lastFocusedProject = null;
 
 function spawnTile(clientX, clientY, options = {}) {
   if (reducedMotion.matches || !heroMedia) {
@@ -269,88 +281,13 @@ function attachProjectPreviews() {
     project.addEventListener("pointerleave", () => stopProjectVideo(project));
     project.addEventListener("focus", () => playProjectVideo(project));
     project.addEventListener("blur", () => stopProjectVideo(project));
-    project.addEventListener("click", () => openProject(project));
+    project.addEventListener("click", () => {
+      const route = projectRoutes[project.dataset.index];
+      if (route) {
+        window.location.assign(route);
+      }
+    });
   });
-}
-
-function openProject(project) {
-  if (!projectViewer || !viewerVideo || !viewerImage) {
-    return;
-  }
-
-  lastFocusedProject = project;
-  viewerIndex.textContent = `${project.dataset.index} / ${String(projects.length).padStart(2, "0")}`;
-  viewerCategory.textContent = project.dataset.category;
-  viewerTitle.textContent = project.dataset.title;
-  viewerDescription.textContent = project.dataset.description;
-
-  const videoSource = project.dataset.video;
-  const imageSource = project.dataset.image;
-
-  viewerVideo.pause();
-  viewerVideo.removeAttribute("src");
-  viewerVideo.load();
-  viewerImage.removeAttribute("src");
-  viewerImage.alt = "";
-  viewerStage.classList.remove("is-video", "is-image");
-
-  if (videoSource) {
-    viewerStage.classList.add("is-video");
-    viewerVideo.src = videoSource;
-    viewerVideo.load();
-    const playPromise = viewerVideo.play();
-    if (playPromise) {
-      playPromise.catch(() => {});
-    }
-  } else if (imageSource) {
-    viewerStage.classList.add("is-image");
-    viewerImage.src = imageSource;
-    viewerImage.alt = project.dataset.title;
-  }
-
-  document.body.classList.add("has-viewer");
-  projectViewer.showModal();
-  viewerClose?.focus({ preventScroll: true });
-}
-
-function closeProject() {
-  if (projectViewer?.open) {
-    projectViewer.close();
-  }
-}
-
-function cleanUpViewer() {
-  viewerVideo?.pause();
-  viewerVideo?.removeAttribute("src");
-  viewerVideo?.load();
-  viewerImage?.removeAttribute("src");
-  document.body.classList.remove("has-viewer");
-  lastFocusedProject?.focus({ preventScroll: true });
-}
-
-function attachViewer() {
-  if (!projectViewer) {
-    return;
-  }
-
-  viewerClose?.addEventListener("click", closeProject);
-  projectViewer.addEventListener("click", (event) => {
-    if (event.target !== projectViewer) {
-      return;
-    }
-
-    const bounds = projectViewer.getBoundingClientRect();
-    const inside =
-      event.clientX >= bounds.left &&
-      event.clientX <= bounds.right &&
-      event.clientY >= bounds.top &&
-      event.clientY <= bounds.bottom;
-
-    if (!inside) {
-      closeProject();
-    }
-  });
-  projectViewer.addEventListener("close", cleanUpViewer);
 }
 
 function attachReveal() {
@@ -432,7 +369,6 @@ document.addEventListener("visibilitychange", () => {
   }
 
   projects.forEach(stopProjectVideo);
-  viewerVideo?.pause();
 });
 
 window.addEventListener("scroll", updateHeader, { passive: true });
@@ -441,7 +377,6 @@ window.addEventListener("load", createIntroSequence);
 attachHeroInteraction();
 attachCursor();
 attachProjectPreviews();
-attachViewer();
 attachReveal();
 attachContactCopy();
 updateHeader();
