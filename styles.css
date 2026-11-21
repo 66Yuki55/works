@@ -1066,6 +1066,83 @@ html.js .project[data-reveal].is-inview {
   transform: translate(0.13em, -0.38em);
 }
 
+.contact-direct {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin: 0 0 clamp(38px, 5vw, 72px);
+  border-top: 1px solid rgba(5, 6, 5, 0.48);
+}
+
+.contact-direct-item {
+  position: relative;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: clamp(18px, 2.5vw, 42px);
+  min-width: 0;
+  min-height: 96px;
+  padding: 19px 0 22px;
+  color: inherit;
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  font: inherit;
+  text-align: left;
+  text-decoration: none;
+}
+
+.contact-direct-item + .contact-direct-item {
+  padding-left: clamp(22px, 3vw, 52px);
+  border-left: 1px solid rgba(5, 6, 5, 0.48);
+}
+
+.contact-direct-label {
+  flex: 0 0 auto;
+  font-size: 9px;
+  line-height: 1.4;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.contact-direct-value {
+  min-width: 0;
+  margin-left: auto;
+  font-family:
+    "Arial Narrow", "Helvetica Neue", Helvetica, Arial, "PingFang SC",
+    "Microsoft YaHei", sans-serif;
+  font-size: clamp(21px, 2.65vw, 41px);
+  font-weight: 400;
+  line-height: 0.9;
+  letter-spacing: 0.015em;
+  transition: opacity 0.2s ease;
+}
+
+.contact-direct-copy {
+  cursor: copy;
+}
+
+.contact-copy-state {
+  flex: 0 0 auto;
+  font-size: 9px;
+  line-height: 1.4;
+  letter-spacing: 0.08em;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+.contact-direct-item:hover .contact-direct-value {
+  opacity: 0.58;
+}
+
+.contact-direct-copy.is-copied .contact-copy-state {
+  text-decoration: none;
+}
+
+.contact-direct-item:focus-visible {
+  outline: 1px solid var(--ink);
+  outline-offset: 5px;
+}
+
 .contact-bottom {
   display: grid;
   grid-template-columns: 1fr auto 1fr;
@@ -1518,14 +1595,35 @@ html.js .project[data-reveal].is-inview {
   }
 
   .contact-top p:last-child {
-    max-width: 130px;
+    max-width: none;
     text-align: right;
+    white-space: nowrap;
   }
 
   .contact-link {
     margin: 74px 0;
     font-size: clamp(25px, 7.8vw, 64px);
     line-height: 0.9;
+  }
+
+  .contact-direct {
+    grid-template-columns: 1fr;
+    margin-bottom: 38px;
+  }
+
+  .contact-direct-item {
+    min-height: 0;
+    padding: 18px 0;
+  }
+
+  .contact-direct-item + .contact-direct-item {
+    padding-left: 0;
+    border-top: 1px solid rgba(5, 6, 5, 0.48);
+    border-left: 0;
+  }
+
+  .contact-direct-value {
+    font-size: clamp(21px, 6.2vw, 27px);
   }
 
   .contact-bottom {
@@ -1586,6 +1684,15 @@ html.js .project[data-reveal].is-inview {
 
   .contact-link {
     font-size: clamp(25px, 7.8vw, 34px);
+  }
+
+  .contact-direct-item {
+    flex-wrap: wrap;
+    gap: 9px 16px;
+  }
+
+  .contact-copy-state {
+    margin-left: auto;
   }
 }
 

@@ -379,6 +379,49 @@ function attachReveal() {
   });
 }
 
+function attachContactCopy() {
+  const copyButtons = [...document.querySelectorAll("[data-copy-value]")];
+
+  copyButtons.forEach((button) => {
+    let resetTimer;
+
+    button.addEventListener("click", async () => {
+      const state = button.querySelector(".contact-copy-state");
+      const value = button.dataset.copyValue;
+
+      try {
+        if (navigator.clipboard && window.isSecureContext) {
+          await navigator.clipboard.writeText(value);
+        } else {
+          const textarea = document.createElement("textarea");
+          textarea.value = value;
+          textarea.setAttribute("readonly", "");
+          textarea.style.position = "fixed";
+          textarea.style.opacity = "0";
+          document.body.append(textarea);
+          textarea.select();
+          const copied = document.execCommand("copy");
+          textarea.remove();
+          if (!copied) {
+            throw new Error("Copy command failed");
+          }
+        }
+
+        state.textContent = "已复制";
+        button.classList.add("is-copied");
+      } catch {
+        state.textContent = "请手动复制";
+      }
+
+      window.clearTimeout(resetTimer);
+      resetTimer = window.setTimeout(() => {
+        state.textContent = "复制";
+        button.classList.remove("is-copied");
+      }, 1800);
+    });
+  });
+}
+
 function updateHeader() {
   header?.classList.toggle("is-scrolled", window.scrollY > 32);
 }
@@ -400,5 +443,6 @@ attachCursor();
 attachProjectPreviews();
 attachViewer();
 attachReveal();
+attachContactCopy();
 updateHeader();
 beginIdleSequence();
