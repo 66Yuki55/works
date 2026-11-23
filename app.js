@@ -1,16 +1,15 @@
 const heroImages = [
-  { src: "assets/works/space-motion-cover.jpg", ratio: 0.75, size: 244, label: "FRAME 01" },
+  { src: "assets/works/aigc-cover.jpg", ratio: 0.5625, size: 206, label: "FRAME 04" },
+  { src: "assets/works/g65-cover.jpg", ratio: 1.777, size: 300, label: "FRAME 09" },
+  { src: "assets/works/abao-ip.jpg", ratio: 0.707, size: 238, label: "FRAME 05" },
+  { src: "assets/works/yonho-ip.jpg", ratio: 0.708, size: 232, label: "FRAME 07" },
+  { src: "assets/works/wifi-cover.jpg", ratio: 1.777, size: 318, label: "FRAME 03" },
   {
     src: "assets/works/copilot-compare-cover.jpg",
     ratio: 0.5625,
     size: 194,
     label: "FRAME 16",
   },
-  { src: "assets/works/yonho-ip.jpg", ratio: 0.708, size: 232, label: "FRAME 07" },
-  { src: "assets/works/wifi-cover.jpg", ratio: 1.777, size: 318, label: "FRAME 03" },
-  { src: "assets/works/charity-a.jpg", ratio: 0.707, size: 218, label: "FRAME 02" },
-  { src: "assets/works/g65-cover.jpg", ratio: 1.777, size: 300, label: "FRAME 09" },
-  { src: "assets/works/abao-ip.jpg", ratio: 0.707, size: 238, label: "FRAME 05" },
   {
     src: "assets/works/research-cover.jpg",
     ratio: 0.5625,
@@ -19,6 +18,7 @@ const heroImages = [
   },
   { src: "assets/works/event-cover.jpg", ratio: 0.75, size: 228, label: "FRAME 17" },
   { src: "assets/works/arsenal-cover.jpg", ratio: 1.777, size: 310, label: "FRAME 15" },
+  { src: "assets/works/space-motion-cover.jpg", ratio: 0.75, size: 244, label: "FRAME 01" },
 ];
 
 const projectRoutes = {
@@ -50,6 +50,8 @@ const heroMedia = document.querySelector(".hero-media");
 const header = document.querySelector(".site-header");
 const cursor = document.querySelector(".site-cursor");
 const projects = [...document.querySelectorAll(".project")];
+const workFilters = [...document.querySelectorAll(".work-filter")];
+const workFilterStatus = document.querySelector(".work-filter-status span");
 
 let imageIndex = 0;
 let lastSpawn = 0;
@@ -290,6 +292,44 @@ function attachProjectPreviews() {
   });
 }
 
+function applyWorkFilter(filter) {
+  let visibleCount = 0;
+
+  workFilters.forEach((button) => {
+    const isActive = button.dataset.filter === filter;
+    button.classList.toggle("is-active", isActive);
+    button.setAttribute("aria-pressed", String(isActive));
+  });
+
+  projects.forEach((project) => {
+    const isVisible =
+      filter === "all" || project.dataset.sector === filter;
+    project.hidden = !isVisible;
+
+    if (isVisible) {
+      visibleCount += 1;
+    } else {
+      stopProjectVideo(project);
+    }
+  });
+
+  if (workFilterStatus) {
+    workFilterStatus.textContent = String(visibleCount).padStart(2, "0");
+  }
+}
+
+function attachWorkFilters() {
+  workFilters.forEach((button) => {
+    button.addEventListener("click", () => {
+      applyWorkFilter(button.dataset.filter || "all");
+    });
+  });
+
+  const initialFilter =
+    document.querySelector(".work-filter.is-active")?.dataset.filter || "all";
+  applyWorkFilter(initialFilter);
+}
+
 function attachReveal() {
   if (!("IntersectionObserver" in window)) {
     projects.forEach((project) => project.classList.add("is-inview"));
@@ -377,6 +417,7 @@ window.addEventListener("load", createIntroSequence);
 attachHeroInteraction();
 attachCursor();
 attachProjectPreviews();
+attachWorkFilters();
 attachReveal();
 attachContactCopy();
 updateHeader();
